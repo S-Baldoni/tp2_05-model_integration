@@ -1,0 +1,94 @@
+  task_sensor.c (task_sensor.h, task_sensor_attribute.h) 
+   Non-Blocking & Update By Time Code -> Sensor Modeling
+  
+...
+TASK_SENSOR:
+Módulos incluidos:
+
+	-main.h
+	-logger.h
+	-dwt.h
+	-board.h
+	-app.h
+	-task_sensor_attribute.h
+	-task_system_attribute.h
+	-task_system_interface.h
+
+Constantes:
+
+	-G_TASK_SEN_CNT_INIT = 0
+	-G_TASK_SEN_TICK_CNT_INI = 0
+	-DEL_BTN_XX_MIN = 0
+	-DEL_BTN_XX_MED = 25
+	-DEL_BTN_XX_MAX = 50
+	-TICK_MAX = 5
+
+Estructuras:
+
+	-task_sensor_cfg_list: configuración de sensores (botones).
+	-task_sensor_dta_list: estado y evento de cada sensor.
+
+Variables externas:
+
+	-g_task_sensor_cnt: contador de actualizaciones.
+	-g_task_sensor_tick_cnt: contador de ticks para temporizado de eventos.
+
+Funciones:
+
+	-task_sensor_init(void *parameters)
+		-Inicializa la tarea de sensor.
+		-Muestra mensajes por logger al iniciar.
+		-Inicializa contadores y estados de los sensores.
+		
+	-task_sensor_update(void *parameters)
+		-Incrementa el contador de la tarea.
+		-Maneja decremento de g_task_sensor_tick_cnt en zona crítica.
+
+Para el sensor:
+
+	-Lee el estado físico del botón.
+	-Actualiza el evento actual (EV_BTN_BLUE_DOWN o EV_BTN_BLUE_UP).
+	
+	-Gestiona la máquina de estados del botón:
+	
+		-ST_BTN_BLUE_UP: transición hacia ST_BTN_BLUE_FALLING si presionado.
+		-ST_BTN_BLUE_FALLING: espera confirmación por tiempo antes de declarar presionado.
+		-ST_BTN_BLUE_DOWN: transición hacia ST_BTN_BLUE_RISING si liberado.
+		-ST_BTN_BLUE_RISING: espera confirmación por tiempo antes de declarar liberado.
+		-Envía eventos signal_down o signal_up a task_system según corresponda.
+
+
+
+TASK_SENSOR_ATTRIBUTE:
+Eventos (task_sensor_ev_t):
+
+	-EV_BTN_BLUE_UP
+	-EV_BTN_BLUE_DOWN
+
+Estados (task_sensor_st_t):
+
+	-ST_BTN_BLUE_UP
+
+	-ST_BTN_BLUE_FALLING
+
+	-ST_BTN_BLUE_DOWN
+
+	-ST_BTN_BLUE_RISING
+
+Identificador (task_sensor_id_t):
+
+	-ID_BTN_A
+
+Configuración (task_sensor_cfg_t): Describe todo lo necesario para configurar un botón:
+
+	-Puerto GPIO
+	-Pin
+	-Estado que representa "presionado"
+	-Tick máximo
+	-Señales asociadas a subir y bajar el botón
+
+Datos de Runtime (task_sensor_dta_t): Guarda:
+
+	-El tick actual
+	-El estado actual
+	-El evento actual

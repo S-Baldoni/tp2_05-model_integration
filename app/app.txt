@@ -1,0 +1,56 @@
+  app.c (app.h)
+   Endless loops, which execute tasks with fixed computing time. This 
+   sequential execution is only deviated from when an interrupt event occurs.
+
+...
+
+
+tipos de datos:
+- uint32_t: enteros de 32 bits sin signo para contadores y tiempos.
+- const char *: punteros a cadenas constantes para mensajes de log.
+
+estructuras de datos:
+- task_cfg_t:
+    - void (*task_init)(void *): puntero a función de inicialización.
+    - void (*task_update)(void *): puntero a función de actualización.
+    - void *parameters: puntero genérico a parámetros de la tarea.
+- task_dta_t:
+    - uint32_t WCET: tiempo máximo de ejecución de la tarea en microsegundos.
+
+arrays de estructuras de datos:
+- task_cfg_list[]: array constante de task_cfg_t, define tareas y funciones asociadas (sensor, sistema, actuador).
+- task_dta_list[]: array de task_dta_t, guarda WCET por tarea.
+
+variables globales:
+- g_app_cnt: contador de ejecuciones de la aplicación.
+- g_app_time_us: tiempo total de ejecución en microsegundos.
+- g_app_tick_cnt: contador de ticks del sistema (volatile).
+
+constantes y macros:
+- G_APP_CNT_INI: valor inicial del contador de la aplicación.
+- G_APP_TICK_CNT_INI: valor inicial del contador de ticks de la aplicación.
+- TASK_X_WCET_INI: valor inicial de WCET.
+- TASK_X_DELAY_MIN: valor mínimo de delay (no usado en este archivo).
+- TASK_QTY: cantidad de tareas calculada a partir de task_cfg_list.
+
+métodos:
+- app_init():
+    - inicializa contadores y estructuras.
+    - imprime mensajes de estado.
+    - llama a funciones de inicialización de cada tarea.
+    - inicializa el ciclo de reloj para medición de tiempos.
+
+- app_update():
+    - decrementa el contador de ticks.
+    - actualiza contadores de aplicación.
+    - llama a funciones de actualización de cada tarea.
+    - mide tiempo de ejecución por tarea.
+    - actualiza WCET si el tiempo actual supera el anterior.
+
+- HAL_SYSTICK_Callback():
+    - incrementa el contador de ticks de la aplicación y de cada tarea.
+
+otros:
+- se usa un logger para imprimir mensajes (LOGGER_LOG).
+- se usa medición de ciclos de reloj para medir tiempos de tareas (cycle_counter_reset y cycle_counter_time_us).
+- sistema basado en ejecución dirigida por ticks (event-triggered).
