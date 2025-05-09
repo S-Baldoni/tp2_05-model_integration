@@ -61,12 +61,12 @@
 
 /********************** internal data declaration ****************************/
 const task_sensor_cfg_t task_sensor_cfg_list[] = {
-	{ID_BTN_1,  Boton1_GPIO_Port,  Boton1_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
-	 EV_SYS_XX_IDLE,  EV_SYS_XX_ACTIVE},
-	 {ID_BTN_2,  Boton2_GPIO_Port,  Boton2_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
-	 	 EV_SYS_XX_IDLE,  EV_SYS_XX_ACTIVE},
+	{ID_BTN_BARRIER,  BTN_BARRIER_GPIO_Port,  BTN_BARRIER_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
+			ST_BARRIER_CLOSE,  EV_SYS_BTN_BARRIER_UNPRESS},
+	 {ID_BTN_IR,  BTN_IR_GPIO_Port,  BTN_IR_Pin,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
+			 ST_BARRIER_CLOSE,  EV_SYS_BTN_IR_UNPRESS},
 	 {ID_BTN_A,  BTN_A_PORT,  BTN_A_PIN,  BTN_A_PRESSED, DEL_BTN_XX_MAX,
-			 EV_SYS_XX_IDLE,  EV_SYS_XX_ACTIVE}
+			 ST_SYS_XX_IDLE,  EV_SYS_XX_ACTIVE}
 };
 
 

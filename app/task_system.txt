@@ -5,3 +5,61 @@
    Non-Blocking Code
 
 ...
+
+  task_system.c (task_system.h, task_system_attribute.h) 
+   Non-Blocking Code -> System Modeling
+  
+  task_system_interface.c (task_system_interface.h)
+   Non-Blocking Code
+
+...
+
+=== EXPLICACIÓN DE task_system.c ===
+
+1. INCLUSIÓN DE CABECERAS:
+Incluye los encabezados:
+- "main.h": definición principal del proyecto.
+- "task_system_attribute.h": define los estados, eventos y estructura del sistema.
+- "task_actuator_sm.h": manejo del actuador (la barrera).
+
+2. VARIABLE GLOBAL:
+Define una instancia global `task_system_dta` del tipo `task_system_dta_t`, que almacena el estado, evento y flag del sistema.
+
+3. INICIALIZACIÓN:
+`task_system_init()`:
+- Inicializa el estado en `ST_SYS_XX_IDLE` y el evento en `EV_SYS_XX_IDLE`.
+- Resetea el tick y la bandera.
+- Llama a `task_actuator_set_init()` para inicializar el actuador.
+
+
+
+=== EXPLICACIÓN DE task_system_attribute.h ===
+
+ENUMERACIONES:
+
+a) Eventos (`task_system_ev_t`):
+- `EV_SYS_XX_IDLE`: desactiva el sistema.
+- `EV_SYS_XX_ACTIVE`: activa el sistema.
+- `EV_SYS_BTN_BARRIER_UNPRESS`: se suelta el botón de la barrera.
+- `EV_SYS_BTN_BARRIER_PRESS`: se presiona el botón de la barrera.
+- `EV_SYS_BTN_IR_PRESS`: se activa un sensor IR.
+- `EV_SYS_BTN_IR_UNPRESS`: se desactiva un sensor IR.
+
+b) Estados (`task_system_st_t`):
+- `ST_SYS_XX_IDLE`: sistema inactivo.
+- `ST_SYS_XX_ACTIVE`: sistema activo.
+- `ST_BARRIER_CLOSE`: barrera cerrada.
+- `ST_BARRIER_RISING`: barrera subiendo.
+- `ST_BARRIER_OPEN`: barrera abierta.
+- `ST_BARRIER_BLOCKED`: barrera bloqueada.
+- `ST_BARRIER_FALLING`: barrera bajando.
+
+ESTRUCTURA PRINCIPAL:
+`task_system_dta_t`:
+- `tick`: contador de tiempo (por ejemplo, milisegundos).
+- `state`: estado actual del sistema.
+- `event`: último evento recibido.
+- `flag`: bandera de control para otras funciones.
+
+VARIABLE GLOBAL:
+Declara `extern task_system_dta_t task_system_dta`, que será usada para mantener el estado global en el archivo `.c`.

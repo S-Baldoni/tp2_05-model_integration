@@ -5,3 +5,87 @@
    Non-Blocking Code
 
 ...
+
+task_actuator_attribute.h:
+
+1. Tipos de datos enumerados (`enum`):
+
+   - `task_actuator_ev_t`: Enumera los eventos que pueden activar transiciones de estado en el actuador. Incluye:
+     - EV_LED_XX_OFF
+     - EV_LED_XX_ON
+     - EV_LED_XX_NOT_BLINK
+     - EV_LED_XX_BLINK
+     - EV_LED_XX_PULSE
+
+   - `task_actuator_st_t`: Enumera los estados posibles del actuador:
+     - ST_LED_XX_OFF
+     - ST_LED_XX_ON
+     - ST_LED_XX_BLINK_ON
+     - ST_LED_XX_BLINK_OFF
+     - ST_LED_XX_PULSE
+
+   - `task_actuator_id_t`: Identificadores únicos para cada actuador controlado:
+     - ID_LED_A
+     - ID_LED_RED
+     - ID_LED_BLUE
+     - ID_LED_GREEN
+     - ID_LED_BARRIER
+
+2. Estructuras de datos (`struct`):
+
+   - `task_actuator_cfg_t`: Contiene la configuración estática de un actuador:
+     - `task_actuator_id_t identifier`: identificador del actuador.
+     - `GPIO_TypeDef *gpio_port`: puntero al puerto GPIO.
+     - `uint16_t pin`: número de pin asociado al actuador.
+     - `GPIO_PinState led_on`: valor lógico que representa LED encendido.
+     - `GPIO_PinState led_off`: valor lógico que representa LED apagado.
+     - `uint32_t tick_blink`: tiempo máximo de parpadeo.
+     - `uint32_t tick_pulse`: tiempo máximo de pulso.
+
+   - `task_actuator_dta_t`: Contiene datos dinámicos del actuador en tiempo de ejecución:
+     - `uint32_t tick`: contador para el temporizado del estado actual.
+     - `task_actuator_st_t state`: estado actual del actuador.
+     - `task_actuator_ev_t event`: último evento recibido.
+     - `bool flag`: bandera para indicar condiciones internas (como cambio de estado pendiente).
+
+3. Arrays:
+
+   - `extern task_actuator_dta_t task_actuator_dta_list[];`: 
+     - Es una declaración externa de un arreglo de estructuras `task_actuator_dta_t`, que almacena los datos dinámicos de cada actuador.
+     - Este array permite manejar múltiples instancias de actuadores en paralelo, cada uno con su propio estado y temporización.
+     
+     
+     
+task_actuator.c:
+1. Inclusiones:
+
+   - `#include "task_actuator_attribute.h"`: Incluye definiciones de estructuras, enums y arrays que representan la configuración y estado de los actuadores.
+   - `#include "gpio.h"`: Facilita el acceso a funciones GPIO para manejar los pines físicos.
+   - `#include "main.h"`: Puede contener definiciones globales, constantes, o configuraciones generales del sistema.
+
+2. Lógica principal:
+
+   - La función principal es un **bucle sobre todos los actuadores** registrados en `task_actuator_dta_list[]`.
+   - Para cada actuador:
+     - Evalúa su `event` actual.
+     - Realiza una **transición de estado** si corresponde (por ejemplo, de `OFF` a `ON`, o a `BLINK`).
+     - Ajusta los valores de `tick`, `state` y `flag` según el evento recibido.
+     - Controla el pin físico mediante `HAL_GPIO_WritePin()`.
+
+3. Manejo de estados y eventos:
+
+   - `EV_LED_XX_ON`: Enciende el actuador y cambia el estado a `ST_LED_XX_ON`.
+   - `EV_LED_XX_OFF`: Apaga el actuador y cambia el estado a `ST_LED_XX_OFF`.
+   - `EV_LED_XX_BLINK`: Inicia el parpadeo alternando entre `BLINK_ON` y `BLINK_OFF`, controlado por el contador `tick`.
+   - `EV_LED_XX_NOT_BLINK`: Detiene el parpadeo y pone el LED en `OFF`.
+   - `EV_LED_XX_PULSE`: Enciende el LED por un tiempo determinado (`tick_pulse`), luego lo apaga automáticamente.
+
+4. Temporización y transiciones internas:
+
+   - El campo `tick` se decrementa en cada ciclo si es mayor a 0.
+   - Cuando `tick` llega a 0, dependiendo del estado actual (`BLINK_ON`, `BLINK_OFF`, `PULSE`), se decide el próximo estado o se apaga el actuador.
+
+5. Escritura de salida física:
+
+   - `HAL_GPIO_WritePin(cfg.gpio_port, cfg.pin, estado)` se usa para modificar el estado del pin GPIO correspondiente.
+   - Se usa `cfg.led_on` y `cfg.led_off` para determinar el valor lógico correcto para encender o apagar el actuador, permitiendo flexibilidad con LEDs activos en alto o bajo.

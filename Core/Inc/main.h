@@ -65,16 +65,24 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
-#define Boton1_Pin GPIO_PIN_10
-#define Boton1_GPIO_Port GPIOA
+#define LED_BLUE_Pin GPIO_PIN_10
+#define LED_BLUE_GPIO_Port GPIOB
+#define LED_GREEN_Pin GPIO_PIN_8
+#define LED_GREEN_GPIO_Port GPIOA
+#define LED_BARRIER_Pin GPIO_PIN_9
+#define LED_BARRIER_GPIO_Port GPIOA
+#define BTN_BARRIER_Pin GPIO_PIN_10
+#define BTN_BARRIER_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
-#define Boton2_Pin GPIO_PIN_5
-#define Boton2_GPIO_Port GPIOB
+#define LED_RED_Pin GPIO_PIN_4
+#define LED_RED_GPIO_Port GPIOB
+#define BTN_IR_Pin GPIO_PIN_5
+#define BTN_IR_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

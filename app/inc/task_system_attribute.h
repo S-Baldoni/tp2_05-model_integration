@@ -63,11 +63,20 @@ extern "C" {
 
 /* Events to excite Task System */
 typedef enum task_system_ev {EV_SYS_XX_IDLE,
-							 EV_SYS_XX_ACTIVE} task_system_ev_t;
+	EV_SYS_XX_ACTIVE,
+	EV_SYS_BTN_BARRIER_UNPRESS,
+	EV_SYS_BTN_BARRIER_PRESS,
+	EV_SYS_BTN_IR_PRESS,
+	EV_SYS_BTN_IR_UNPRESS} task_system_ev_t;
 
 /* State of Task System */
 typedef enum task_system_st {ST_SYS_XX_IDLE,
-							 ST_SYS_XX_ACTIVE} task_system_st_t;
+	ST_SYS_XX_ACTIVE,
+	ST_BARRIER_CLOSE,
+	ST_BARRIER_RISING,
+	ST_BARRIER_OPEN,
+	ST_BARRIER_BLOCKED,
+	ST_BARRIER_FALLING} task_system_st_t;
 
 typedef struct
 {
@@ -76,6 +85,7 @@ typedef struct
 	task_system_ev_t	event;
 	bool				flag;
 } task_system_dta_t;
+
 
 /********************** external data declaration ****************************/
 extern task_system_dta_t task_system_dta;
